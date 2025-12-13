@@ -17,7 +17,7 @@
 #define BUTON_FONT_SIZE 5
 #define WB 220
 #define HB 50
-
+// sall
 enum stare {
 	MENIU_PRINCIPAL,
 	MENIU_MOD_JOC,
