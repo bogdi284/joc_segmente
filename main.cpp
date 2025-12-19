@@ -213,7 +213,7 @@ void desen_setup_joc() {
 
 	setcolor(WHITE);
 	settextstyle(BOLD_FONT, HORIZ_DIR, 4);
-	char titlu[] = "CONFIGUARARE JUCATORI";
+	char titlu[] = "CONFIGURARE JUCATORI";
 	outtextxy((W - textwidth(titlu)) / 2, 50, titlu);
 
 	//player 1
@@ -230,13 +230,13 @@ void desen_setup_joc() {
 
 	//player 2
 	settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 3);
-	setcolor(culoare_player1);
+	setcolor(culoare_player2);
 	outtextxy(input2.x, input2.y - 40, (mod_joc == 1 ? "COMPUTER" : "PLAYER 2"));
 	//caseta nume player 2
 	setcolor(input_focus == 2 ? YELLOW : WHITE);
 	rectangle(input2.x, input2.y, input2.x + input2.w, input2.y + input2.h);
 	setcolor(WHITE);
-	outtextxy(input2.x + 10, input2.y + 10, (mod_joc == 1 ? "BOT" : ""));
+	outtextxy(input2.x + 10, input2.y + 10, (mod_joc == 1 ? "BOT" : nume_player2));
 	//paleta culori 2
 	paleta_culori(input2.x, input2.y + 80, culoare_player2);
 
@@ -313,7 +313,6 @@ int main() {
 				else if (este_click_pe_buton(buton_start, mx, my)) {
 					stare_curenta = MENIU_MOD_JOC;
 				}
-				///aici va veni setari :))
 			}
 			else if (stare_curenta == MENIU_MOD_JOC) {
 				if (este_click_pe_buton(buton_inapoi, mx, my)) {
