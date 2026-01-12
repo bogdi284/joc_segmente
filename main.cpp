@@ -29,7 +29,8 @@ const int NUMAR_CULORI = 8;
 //coliziuni
 #define RAZA_PUNCT 8
 #define MARJA_COLIZIUNE 15 //distanta minima acceptata intre o linie si un punct
-
+//variabile pentru sistemul de logging
+FILE* fisier_log = NULL;
 //starile pe care le poate avea jocul
 enum stare {
 	MENIU_PRINCIPAL,
@@ -137,7 +138,7 @@ int maxim(int a, int b) {
 }
 long long produs_vectorial(punct a, punct b, punct c) {
 	//functie de produs vectorial 
-	return (long long)(b.x - a.x) * (c.y - a.y) - (long)(long)(b.y - a.y) * (c.x - a.x);
+	return (long long)(b.x - a.x) * (c.y - a.y) - (long long)(b.y - a.y) * (c.x - a.x);
 }
 bool pe_segment(punct a, punct b, punct c) {
 	//functie care verifica daca punctul c se afla pe segemntul ab (pentru pct coliniare)
@@ -522,6 +523,60 @@ void desen_joc() {
 		fillellipse(puncte[i].x, puncte[i].y, 8, 8);
 	}
 }
+//functii pentru sistemul de logging
+void init_log() {
+	time_t t = time(NULL);
+	struct tm* tm = localtime(&t);
+	char nume_fisier[100];
+
+	sprintf(nume_fisier, "meci_%04d%02d%02d_%02d%02d%02d.txt", tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+
+	fisier_log = fopen(nume_fisier, "w");
+
+	if (fisier_log) {
+		fprintf(fisier_log, " JOC SEGMENTE - LOG MECI \n");
+		fprintf(fisier_log, " Data: %02d-%02d-%04d\n", tm->tm_mday, tm->tm_mon + 1, tm->tm_year + 1900);
+		fprintf(fisier_log, "Ora inceperii: %02d:%02d:%02d\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		fprintf(fisier_log, "Jucator 1: %s\n", nume_player1);
+		fprintf(fisier_log, "Jucator 2: %s\n", nume_player2);
+		fprintf(fisier_log, "\n");
+		fprintf(fisier_log, "MUTARI:\n");
+	}
+}
+void log_mutare(int idx1, int idx2, int jucator) {
+	if (!fisier_log) return;
+	
+	time_t t = time(NULL);
+	struct tm* tm = localtime(&t);
+	char* nume_jucator = (jucator == 1) ? nume_player1 : nume_player2;
+
+	fprintf(fisier_log, "[%02d:%02d:%02d] %s a trasat segment intre (%d , %d) si (%d , %d)\n" , tm->tm_hour , tm->tm_min , tm->tm_sec , nume_jucator , puncte[idx1].x , puncte[idx1].y , puncte[idx2].x , puncte[idx2].y);
+	fflush(fisier_log);
+}
+void inchide_log(bool terminat_cu_succes) {
+	if (!fisier_log) return;
+
+	time_t t = time(NULL);
+	struct tm* tm = localtime(&t);
+
+	fprintf(fisier_log, "\n");
+	if (terminat_cu_succes) {
+		char* nume_castigator = (castigator == 1) ? nume_player1 : nume_player2;
+		fprintf(fisier_log, "Meci incheiat la: %02d:%02d:%02d\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		fprintf(fisier_log, "CASTIGATOR: %s\n", nume_castigator);
+	}
+	else {
+		fprintf(fisier_log,"Meci intrerupt la: %02d:%02d:%02d\n", tm->tm_hour, tm->tm_min, tm->tm_sec);
+		fprintf(fisier_log, "Fara castigator.\n");
+	}
+	fclose(fisier_log);
+	fisier_log = NULL;
+}
+void log_undo(int x1, int y1, int x2, int y2, int jucator) {
+	if (!fisier_log) return;
+	fprintf(fisier_log, "Segmentul (%d , %d) - (%d , %d) a fost sters de %s \n", x1, y1, x2, y2, (jucator == 1 ? nume_player1 : nume_player2));
+	fflush(fisier_log);
+}
 int main() {
 	initwindow(W , H , "Joc Segmente");
 
@@ -641,6 +696,7 @@ int main() {
 					if (numar_puncte >= 4) {
 						logica_joc(); //reset variabile de joc
 						time(&timp_start);
+						init_log();
 						stare_curenta = JOC;
 					}
 				}
@@ -671,12 +727,15 @@ int main() {
 			}
 			else if (stare_curenta == JOC) {
 				if (este_click_pe_buton(buton_inapoi, mx, my)) {
+					inchide_log(false);
 					dealocare();
 					stare_curenta = MENIU_PRINCIPAL;
 				}
 				else if (este_click_pe_buton(buton_undo, mx, my)) {
 					if (numar_segmente > 0) {
 						segment s = segmente[numar_segmente - 1];
+
+						log_undo(s.p1.x, s.p1.y, s.p2.x, s.p2.y, s.jucator);
 
 						for (int i = 0; i < numar_puncte; i++) {
 							if ((puncte[i].x == s.p1.x && puncte[i].y == s.p1.y) || (puncte[i].x == s.p2.x && puncte[i].y == s.p2.y)) {
@@ -710,6 +769,8 @@ int main() {
 								}
 								else {
 									if (mutare_valida(index_punct, i)) {
+
+										log_mutare(index_punct, i, jucator_curent);
 										segmente[numar_segmente].p1 = puncte[index_punct];
 										segmente[numar_segmente].p2 = puncte[i];
 										segmente[numar_segmente].jucator = jucator_curent;
@@ -723,6 +784,7 @@ int main() {
 											joc_terminat = true;
 											castigator = jucator_curent;
 											time(&timp_final);
+											inchide_log(true);
 										}
 										else {
 											jucator_curent = (jucator_curent == 1) ? 2 : 1;
