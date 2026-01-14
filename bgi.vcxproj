@@ -77,7 +77,6 @@
     <ClCompile Include="winthread.cxx" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="backend.h" />
     <ClInclude Include="dibutil.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="winbgi.h" />

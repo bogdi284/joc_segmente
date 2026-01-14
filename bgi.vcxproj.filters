@@ -68,8 +68,5 @@
     <ClInclude Include="dibutil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="backend.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
