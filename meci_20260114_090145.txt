@@ -1,0 +1,14 @@
+ JOC SEGMENTE - LOG MECI 
+ Data: 14-01-2026
+Ora inceperii: 09:01:45
+Jucator 1: Andrei
+Jucator 2: Bogdan
+
+MUTARI:
+[09:01:48] Andrei a trasat segment intre (637 , 320) si (640 , 437)
+[09:01:50] Bogdan a trasat segment intre (534 , 422) si (466 , 354)
+[09:01:52] Andrei a trasat segment intre (626 , 201) si (898 , 370)
+[09:01:54] Bogdan a trasat segment intre (827 , 458) si (582 , 587)
+
+Meci incheiat la: 09:01:54
+CASTIGATOR: Bogdan

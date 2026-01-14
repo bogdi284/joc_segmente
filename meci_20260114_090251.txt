@@ -1,0 +1,14 @@
+ JOC SEGMENTE - LOG MECI 
+ Data: 14-01-2026
+Ora inceperii: 09:02:51
+Jucator 1: Alex
+Jucator 2: Bogdanafdas
+
+MUTARI:
+[09:02:54] Alex a trasat segment intre (599 , 365) si (832 , 366)
+[09:02:54] Bogdanafdas a trasat segment intre (738 , 332) si (751 , 270)
+[09:02:56] Alex a trasat segment intre (654 , 505) si (687 , 391)
+[09:02:56] Bogdanafdas a trasat segment intre (851 , 204) si (538 , 322)
+
+Meci incheiat la: 09:02:56
+CASTIGATOR: Bogdanafdas

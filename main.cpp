@@ -28,8 +28,8 @@ const int NUMAR_CULORI = 8;
 
 //coliziuni
 #define RAZA_PUNCT 8
-#define MARJA_COLIZIUNE 15 //distanta minima acceptata intre o linie si un punct
-//variabile pentru sistemul de logging
+#define MARJA_COLIZIUNE 15 
+
 FILE* fisier_log = NULL;
 //starile pe care le poate avea jocul
 enum stare {
@@ -53,27 +53,27 @@ struct caseta_nume {
 	bool activ;
 };
 
-//structuri pentru joc
+
 struct punct {
 	int x, y;
 	bool folosit;
 };
 struct segment {
 	punct p1, p2;
-	int jucator; //1 - player1 si 2 - player2
+	int jucator; 
 };
 
-//butoane:)
+
 buton buton_start, buton_setari, buton_instr, buton_iesire, buton_inapoi ;
 buton buton_pvp, buton_pvb , buton_start_joc;
 buton buton_continua, buton_gata ;
 buton buton_undo;
 
-//setari default
+
 int stare_curenta = MENIU_PRINCIPAL;
 int mod_joc = 0; //0 - pvp si 1 - pvb
 
-//date despre jucatori
+
 char nume_player1[21] = "Player 1";
 char nume_player2[21] = "Player 2";
 int culoare_player1 = 1; //default e blue
@@ -81,17 +81,17 @@ int culoare_player2 = 2; //default e green
 
 //configurari caseta schimbare nume la selectia playerilor
 caseta_nume input1, input2;
-int input_focus = 0; //0 - nimic , 1 - player 1 , 2 - player 2
+int input_focus = 0; 
 
-// cronometrare joc
+
 time_t timp_start;
 time_t timp_final;
 
-//alocari dinamice
+
 punct* puncte = NULL;
 segment* segmente = NULL;
 
-//variabile de joc
+
 int capacitate_maxima = 1000;
 int numar_puncte = 0;
 int numar_segmente = 0;
@@ -100,7 +100,7 @@ int index_punct = -1;
 bool joc_terminat = false;
 int castigator = 0;
 
-//alocari dinamice
+
 void alocare() {
 	if (puncte == NULL) {
 		puncte = new punct[capacitate_maxima];
@@ -129,7 +129,7 @@ void dealocare() {
 	numar_segmente = 0;
 }
 
-//functii matematice
+
 int minim(int a, int b) {
 	return (a < b) ? a : b;
 }
@@ -137,11 +137,11 @@ int maxim(int a, int b) {
 	return (a > b) ? a : b;
 }
 long long produs_vectorial(punct a, punct b, punct c) {
-	//functie de produs vectorial 
+	
 	return (long long)(b.x - a.x) * (c.y - a.y) - (long long)(b.y - a.y) * (c.x - a.x);
 }
 bool pe_segment(punct a, punct b, punct c) {
-	//functie care verifica daca punctul c se afla pe segemntul ab (pentru pct coliniare)
+	
 	return c.x >= minim(a.x, b.x) && c.x <= maxim(a.x, b.x) && c.y >= minim(a.y, b.y) && c.y <= maxim(a.y, b.y);
 }
 double distanta_punct_segment(punct p, punct a, punct b) {
@@ -198,7 +198,6 @@ bool mutare_valida(int i1, int i2) {
 	return true;
 }
 bool mai_exista_mutari() {
-	//functie care verifica conditia de victorie , daca mai exista mutari posibile
 	for (int i = 0; i < numar_puncte; i++) {
 		if (puncte[i].folosit) continue;
 		for (int j = i + 1; j < numar_puncte; j++) {
@@ -209,9 +208,7 @@ bool mai_exista_mutari() {
 	return false;
 }
 
-//initializare logica jocului
 void logica_joc() {
-	//incepem jocul cu variabilele default
 	numar_segmente = 0;
 	jucator_curent = 1;
 	joc_terminat = false;
@@ -222,7 +219,7 @@ void logica_joc() {
 		puncte[i].folosit = false;
 	}
 }
-// interfata (butoane)
+
 void init_buton(buton* b, int x, int y, int w, int h, const char* text) {
 	b->x = x;
 	b->y = y;
@@ -235,23 +232,22 @@ void desen_buton(buton b) {
 	int my = mousey();
 	bool este_sub_mouse = (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h);
 	int culoare_fill = este_sub_mouse ? BUTON_CULOARE_HOVER : BUTON_CULOARE;
-	/// fundal buton
+	
 	setfillstyle(SOLID_FILL, culoare_fill);
 	bar(b.x, b.y, b.x + b.w, b.y + b.h);
-	///contur buton
+	
 	setcolor(WHITE);
 	rectangle(b.x, b.y, b.x + b.w, b.y + b.h);
-	///text
+	
 	setbkcolor(culoare_fill);
 	setcolor(BUTON_CULOARE_TEXT);
 	int marime_curenta = BUTON_FONT_SIZE;
-	//settextstyle(BUTON_FONT, HORIZ_DIR, BUTON_FONT_SIZE);
 	
 	while ((textwidth(b.text) > b.w - 5 || textheight(b.text) > b.h - 2) && marime_curenta > 1) {
 		marime_curenta--;
 		settextstyle(BUTON_FONT, HORIZ_DIR, marime_curenta);
 	}
-	///centrare text
+
 	int text_latime = textwidth(b.text);
 	int text_inaltime = textheight(b.text);
 	int tx = b.x + (b.w - text_latime) / 2;
@@ -262,7 +258,7 @@ void desen_buton(buton b) {
 bool este_click_pe_buton(buton b, int mx, int my) {
 	return (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h);
 }
-//interfata (meniuri)
+
 void init_meniu_principal() {
 	int xcentru = (W - WB) / 2;
 	int ystart = 250;
@@ -276,7 +272,7 @@ void init_meniu_principal() {
 void desen_meniu_principal() {
 	setbkcolor(CULOARE_FUNDAL);
 	cleardevice();
-	//titlu
+
 	setcolor(YELLOW);
 	settextstyle(BOLD_FONT, HORIZ_DIR, 6);
 	char titlu[] = "JOC SEGMENTE";
@@ -293,12 +289,12 @@ void init_instructiuni() {
 void desen_instructiuni() {
 	setbkcolor(CULOARE_FUNDAL);
 	cleardevice();
-	//titlu pagina
+	
 	setcolor(YELLOW);
 	settextstyle(BOLD_FONT, HORIZ_DIR, 5);
 	char titlu[] = "REGULI DE JOC";
 	outtextxy((W - textwidth(titlu)) / 2, 80, titlu);
-	//text instructiuni
+	
 	setcolor(WHITE);
 	settextstyle(BOLD_FONT, HORIZ_DIR, 4);
 	int ytext = 175;
@@ -339,18 +335,16 @@ void desen_meniu_mod_joc() {
 	desen_buton(buton_pvb);
 	desen_buton(buton_inapoi);
 }
-//functii pentru setup ul jocului
+
 void init_setup_joc() {
 	int w_caseta = 300, h_caseta = 50;
 
-	//playerul 1
 	input1.x = 200;
 	input1.y = 200;
 	input1.w = w_caseta;
 	input1.h = h_caseta;
 	input1.activ = false;
 
-	//playerul 2
 	input2.x = W - 200 - w_caseta;
 	input2.y = 200;
 	input2.w = w_caseta;
@@ -386,7 +380,7 @@ void desen_setup_joc() {
 	char titlu[] = "CONFIGURARE JUCATORI";
 	outtextxy((W - textwidth(titlu)) / 2, 50, titlu);
 
-	//player 1
+	
 	settextstyle(BUTON_FONT, HORIZ_DIR, 4);
 	setcolor(culoare_player1);
 	outtextxy(input1.x, input1.y - 40, "PLAYER 1");
@@ -423,7 +417,7 @@ void este_click_pe_paleta(int mx, int my, int xstart, int ystart, int& culoare_s
 		}
 	}
 }
-//functii legate de puncte
+
 void init_plasare_puncte() {
 	init_buton(&buton_gata, W - 170 , H - 70, 150, 50, "GATA");
 	init_buton(&buton_inapoi, 20 , H - 70 , 150 , 50 , "INAPOI");
@@ -456,7 +450,6 @@ void desen_plasare_puncte() {
 	desen_buton(buton_inapoi);
 	desen_buton(buton_undo);
 }
-//functii legate de joc
 void desen_joc() {
 	setbkcolor(BLACK);
 	cleardevice();
@@ -886,13 +879,11 @@ int main() {
 											segmente[numar_segmente].p2 = puncte[jb];
 											segmente[numar_segmente].jucator = jucator_curent;
 											numar_segmente++;
-											//marcam punctele ca folosite
 											puncte[ib].folosit = true;
 											puncte[jb].folosit = true;
 
 											index_punct = -1;
 
-											//verific conditia de victorie
 											if (!mai_exista_mutari()) {
 												joc_terminat = true;
 												castigator = jucator_curent;

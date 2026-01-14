@@ -1,0 +1,10 @@
+ JOC SEGMENTE - LOG MECI 
+ Data: 14-01-2026
+Ora inceperii: 08:46:33
+Jucator 1: Player 1
+Jucator 2: Player 2
+
+MUTARI:
+
+Meci intrerupt la: 08:46:37
+Fara castigator.

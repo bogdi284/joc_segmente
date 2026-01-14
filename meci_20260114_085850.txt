@@ -1,0 +1,14 @@
+ JOC SEGMENTE - LOG MECI 
+ Data: 14-01-2026
+Ora inceperii: 08:58:50
+Jucator 1: ljndjknkjdnsf
+Jucator 2: And
+
+MUTARI:
+[08:58:53] ljndjknkjdnsf a trasat segment intre (627 , 264) si (810 , 281)
+[08:58:53] And a trasat segment intre (912 , 493) si (496 , 344)
+[08:58:55] ljndjknkjdnsf a trasat segment intre (625 , 338) si (789 , 390)
+[08:58:55] And a trasat segment intre (649 , 423) si (593 , 505)
+
+Meci incheiat la: 08:58:55
+CASTIGATOR: And
