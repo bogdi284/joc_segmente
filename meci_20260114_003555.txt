@@ -1,0 +1,12 @@
+ JOC SEGMENTE - LOG MECI 
+ Data: 14-01-2026
+Ora inceperii: 00:35:55
+Jucator 1: Player 1
+Jucator 2: Player 2
+
+MUTARI:
+[00:35:57] Player 1 a trasat segment intre (589 , 390) si (848 , 415)
+[00:35:57] Player 2 a trasat segment intre (676 , 266) si (710 , 271)
+
+Meci incheiat la: 00:35:57
+CASTIGATOR: Player 2

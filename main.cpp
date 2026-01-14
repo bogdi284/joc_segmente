@@ -208,6 +208,7 @@ bool mai_exista_mutari() {
 	}
 	return false;
 }
+
 //initializare logica jocului
 void logica_joc() {
 	//incepem jocul cu variabilele default
@@ -470,15 +471,16 @@ void desen_joc() {
 	setcolor(WHITE);
 	settextstyle(BOLD_FONT, HORIZ_DIR, 3);
 	char info[300];
-	
+
+
 	if (!joc_terminat) {
 		settextstyle(BOLD_FONT, HORIZ_DIR, 4);
-		sprintf(info, "Randul lui: %s ", (jucator_curent == 1 ? nume_player1 : nume_player2));
+		sprintf(info, "Randul lui: %s ", (jucator_curent == 1 ? nume_player1 : (mod_joc == 1 ? "Bot" : nume_player2)));
 		setcolor(jucator_curent == 1 ? culoare_player1 : culoare_player2);
 	}
 	else {
 		settextstyle(BOLD_FONT, HORIZ_DIR, 4);
-		sprintf(info, "CASTIGATORUL este: %s", (jucator_curent == 1 ? nume_player1 : nume_player2));
+		sprintf(info, "CASTIGATORUL este: %s", (jucator_curent == 1 ? nume_player1 : (mod_joc == 1 ? "Bot" : nume_player2)));
 		setcolor(GREEN);
 	}
 	outtextxy(W / 2 - textwidth(info) / 2, 25, info);
@@ -788,6 +790,119 @@ int main() {
 										}
 										else {
 											jucator_curent = (jucator_curent == 1) ? 2 : 1;
+										}
+										if (mod_joc == 1 && jucator_curent == 2)//bot-ul
+										{
+
+											int ok = 0, ib, jb,mini=1000,maxi=-1;
+											int a, b, c, d, cond;
+											float rezult;
+
+											srand(time(NULL));
+
+											cond = (rand() % 2) + 1;
+
+											if(cond==1)
+											for (int i = 0; i < numar_puncte; i++) {
+												if (puncte[i].folosit) continue;
+												for (int j = i + 1; j < numar_puncte; j++) {
+													if (puncte[j].folosit) continue;
+													if (mutare_valida(i, j))
+													{
+
+														a = puncte[i].x;
+														b = puncte[i].y;
+														c = puncte[j].x;
+														d = puncte[j].y;
+
+														if (b < d)
+														{
+															float copie;
+															copie = b;
+															b = d;
+															d = copie;
+														}
+														if (c < a)
+														{
+															float copie;
+															copie = a;
+															a = c;
+															c = copie;
+														}
+														rezult = (sqrt((c - a) * (c - a) + (b - d) * (b - d))) * 1.0;
+
+														if (rezult < mini)
+														{
+															mini = rezult;
+															ib = i;
+															jb = j;
+														}
+
+													}
+												}
+											}
+											else
+												for (int i = 0; i < numar_puncte; i++) {
+													if (puncte[i].folosit) continue;
+													for (int j = i + 1; j < numar_puncte; j++) {
+														if (puncte[j].folosit) continue;
+														if (mutare_valida(i, j))
+														{
+
+															a = puncte[i].x;
+															b = puncte[i].y;
+															c = puncte[j].x;
+															d = puncte[j].y;
+
+															if (b < d)
+															{
+																float copie;
+																copie = b;
+																b = d;
+																d = copie;
+															}
+															if (c < a)
+															{
+																float copie;
+																copie = a;
+																a = c;
+																c = copie;
+															}
+															rezult = (sqrt((c - a) * (c - a) + (b - d) * (b - d))) * 1.0;
+
+															if (rezult > maxi)
+															{
+																maxi = rezult;
+																ib = i;
+																jb = j;
+															}
+
+														}
+													}
+												}
+
+											log_mutare(ib, jb, jucator_curent);
+											segmente[numar_segmente].p1 = puncte[ib];
+											segmente[numar_segmente].p2 = puncte[jb];
+											segmente[numar_segmente].jucator = jucator_curent;
+											numar_segmente++;
+											//marcam punctele ca folosite
+											puncte[ib].folosit = true;
+											puncte[jb].folosit = true;
+
+											index_punct = -1;
+
+											//verific conditia de victorie
+											if (!mai_exista_mutari()) {
+												joc_terminat = true;
+												castigator = jucator_curent;
+												time(&timp_final);
+												inchide_log(true);
+											}
+											else {
+												jucator_curent = (jucator_curent == 1) ? 2 : 1;
+											}
+
 										}
 									}
 									else {
